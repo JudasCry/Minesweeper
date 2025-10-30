@@ -1,5 +1,4 @@
-#ifndef GAMESTATE_H
-#define GAMESTATE_H
+#pragma once
 
 enum class GameState {
 
@@ -10,5 +9,3 @@ enum class GameState {
     Paused
 
 };
-
-#endif // GAMESTATE_H

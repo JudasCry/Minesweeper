@@ -1,5 +1,4 @@
-#ifndef DIFFICULTY_H
-#define DIFFICULTY_H
+#pragma once
 
 #include <QString>
 
@@ -22,5 +21,3 @@ public:
     int getMines() const;
 
 };
-
-#endif // DIFFICULTY_H

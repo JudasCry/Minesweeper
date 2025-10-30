@@ -1,5 +1,4 @@
-#ifndef CELL_H
-#define CELL_H
+#pragma once
 
 class Cell
 {
@@ -34,8 +33,6 @@ public:
     int getY() const;
 
     bool isEmpty() const;
-    void setCoordinates(int x, int y);
+    void setCoordinates(int newX, int newY);
 
 };
-
-#endif // CELL_H

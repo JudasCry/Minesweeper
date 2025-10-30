@@ -2,7 +2,6 @@
 #include <stdexcept>
 
 Difficulty::Difficulty(const QString& name, int width, int height, int mines)
-    : name(name), width(width), height(height), mines(mines)
 {
 
     if (width <= 0 || height <= 0) {
@@ -12,6 +11,11 @@ Difficulty::Difficulty(const QString& name, int width, int height, int mines)
     if (mines <= 0 || mines >= width * height) {
         throw std::invalid_argument("Неверное количество мин");
     }
+
+    this->name = name;
+    this->width = width;
+    this->height = height;
+    this->mines = mines;
 
 }
 

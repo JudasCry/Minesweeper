@@ -1,5 +1,4 @@
-#ifndef POINT_H
-#define POINT_H
+#pragma once
 
 class Point
 {
@@ -16,5 +15,3 @@ public:
     int getY() const;
 
 };
-
-#endif // POINT_H

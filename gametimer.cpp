@@ -12,7 +12,7 @@ void GameTimer::start() {
     if (!isRunning) {
 
         isRunning = true;
-        timer.start(1000); // запускаем таймер на 1 секунду
+        timer.start(TIMER_INTERVAL_MS); // запускаем таймер на 1 секунду
 
     }
 }
@@ -44,11 +44,11 @@ bool GameTimer::getIsRunning() const {
 
 QString GameTimer::getFormattedTime() const {
 
-    int minutes = elapsedSeconds / 60;
-    int seconds = elapsedSeconds % 60;
+    int minutes = elapsedSeconds / SECONDS_PER_MINUTE;
+    int seconds = elapsedSeconds % SECONDS_PER_MINUTE;
 
     // Форматируем время как MM:SS //
-    return QString("%1:%2").arg(minutes, 2, 10, QChar('0')).arg(seconds, 2, 10, QChar('0'));
+    return QString("%1:%2").arg(minutes, TIME_COMPONENT_WIDTH, DECIMAL_BASE, QChar('0')).arg(seconds, TIME_COMPONENT_WIDTH, DECIMAL_BASE, QChar('0'));
 
 }
 

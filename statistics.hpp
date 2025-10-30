@@ -1,8 +1,12 @@
-#ifndef STATISTICS_H
-#define STATISTICS_H
+#pragma once
 
 class Statistics
 {
+
+private:
+
+    static const int IN_PROCENTS = 100.0;
+
 private:
 
     int totalGames;
@@ -26,5 +30,3 @@ public:
     void reset();
 
 };
-
-#endif // STATISTICS_H

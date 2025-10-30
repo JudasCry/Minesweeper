@@ -1,5 +1,4 @@
-#ifndef GAME_H
-#define GAME_H
+#pragma once
 
 #include "gamefield.hpp"
 #include "gametimer.hpp"
@@ -42,5 +41,3 @@ public:
     Statistics& getStatistics();
 
 };
-
-#endif // GAME_H

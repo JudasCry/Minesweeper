@@ -32,10 +32,10 @@ void Cell::setAdjacentMines(int count) {
     adjacentMines = count;
 }
 
-void Cell::setCoordinates(int x, int y) {
+void Cell::setCoordinates(int newX, int newY) {
 
-    this->x = x;
-    this->y = y;
+    this->x = newX;
+    this->y = newY;
 
 }
 

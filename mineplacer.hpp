@@ -1,5 +1,4 @@
-#ifndef MINEPLACER_H
-#define MINEPLACER_H
+#pragma once
 
 #include <random>
 #include "point.hpp"
@@ -21,5 +20,3 @@ public:
     Point getRandomPosition(int maxX, int maxY);
 
 };
-
-#endif // MINEPLACER_H

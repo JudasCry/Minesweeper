@@ -1,5 +1,4 @@
-#ifndef GAMEFIELD_H
-#define GAMEFIELD_H
+#pragma once
 
 #include "cell.hpp"
 #include "mineplacer.hpp"
@@ -36,5 +35,3 @@ public:
     void resetField();
 
 };
-
-#endif // GAMEFIELD_H

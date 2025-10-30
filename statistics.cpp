@@ -38,7 +38,7 @@ double Statistics::getWinRate() const {
         return 0.0;
     }
 
-    return static_cast<double>(wins) / totalGames * 100.0;
+    return static_cast<double>(wins) / totalGames * IN_PROCENTS;
 }
 
 int Statistics::getBestTime() const {
