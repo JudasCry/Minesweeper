@@ -9,9 +9,10 @@ namespace Lab3
         private const int TIMER_INTERVAL_MS = 1000; // Интервал обновления таймера в 1000 мс
         private const int SECONDS_PER_MINUTE = 60; // 60 секунд = 1 минута
 
-        private int _elapsedSeconds;
-        private bool _isRunning;
         private Timer _timer;
+
+        public int ElapsedSeconds { get; set; }
+        public bool IsRunning { get; set; }
 
         public event Action<string> TimeUpdated; // Событие (аналог сигналам и слотам в Qt)
 
@@ -24,23 +25,13 @@ namespace Lab3
 
         }
 
-        public int ElapsedSeconds
-        {
-            get { return _elapsedSeconds; }
-        }
-
-        public bool IsRunning
-        {
-            get { return _isRunning; }
-        }
-
         public void Start()
         {
 
-            if (!_isRunning)
+            if (!IsRunning)
             {
 
-                _isRunning = true;
+                IsRunning = true;
                 _timer.Start();
 
             }
@@ -50,10 +41,10 @@ namespace Lab3
         public void Stop()
         {
 
-            if (_isRunning)
+            if (IsRunning)
             {
 
-                _isRunning = false;
+                IsRunning = false;
                 _timer.Stop();
 
             }
@@ -64,7 +55,7 @@ namespace Lab3
         {
 
             Stop();
-            _elapsedSeconds = 0;
+            ElapsedSeconds = 0;
             TimeUpdated?.Invoke(GetFormattedTime());
 
         }
@@ -72,8 +63,8 @@ namespace Lab3
         public string GetFormattedTime()
         {
 
-            int minutes = _elapsedSeconds / SECONDS_PER_MINUTE;
-            int seconds = _elapsedSeconds % SECONDS_PER_MINUTE;
+            int minutes = ElapsedSeconds / SECONDS_PER_MINUTE;
+            int seconds = ElapsedSeconds % SECONDS_PER_MINUTE;
 
 
             return $" {minutes:D2}:{seconds:D2}";
@@ -82,10 +73,10 @@ namespace Lab3
         public void Timer_Tick(object sender, EventArgs e)
         {
 
-            if (_isRunning)
+            if (IsRunning)
             {
 
-                _elapsedSeconds++;
+                ElapsedSeconds++;
                 TimeUpdated?.Invoke(GetFormattedTime());
 
             }

@@ -5,101 +5,76 @@ namespace Lab3
     public class Statistics
     {
 
-        private int _totalGames;
-        private int _wins;
-        private int _losses;
-        private int _totalTimePlayed;
-        private int _bestTime;
+        public int TotalGames { get; set; }
+        public int Wins { get; set; }
+        public int Losses { get; set; }
+        public int TotalTimePlayed { get; set; }
+        public int BestTime { get; set; }
 
         public Statistics(int totalGames, int wins, int losses, int totalTimePlayed, int bestTime)
         {
 
-            _totalGames = totalGames;
-            _wins = wins;
-            _losses = losses;
-            _totalTimePlayed = totalTimePlayed;
-            _bestTime = bestTime;
+            TotalGames = totalGames;
+            Wins = wins;
+            Losses = losses;
+            TotalTimePlayed = totalTimePlayed;
+            BestTime = bestTime;
 
-        }
-
-        public int TotalGames 
-        { 
-            get { return _totalGames; } 
-        }
-
-        public int Wins
-        {
-            get { return _wins; }
-        }
-
-        public int Losses
-        {
-            get { return _losses; }
-        }
-
-        public int TotalTimePlayed
-        {
-            get { return _totalTimePlayed; }
-        }
-
-        public int BestTime
-        {
-            get { return _bestTime; }
         }
 
         public void AddGameResult(bool won, int time)
         {
 
-            _totalGames++;
+            TotalGames++;
 
             if (won)
             {
-                _wins++;
+                Wins++;
 
-                if (_bestTime == 0 || time <  _bestTime)
+                if (BestTime == 0 || time < BestTime)
                 {
-                    _bestTime = time;
+                    BestTime = time;
                 }
             }
             else
             {
-                _losses++;
+                Losses++;
             }
 
-            _totalTimePlayed += time;
+            TotalTimePlayed += time;
         }
 
         public double WinRate()
         {
 
-            if (_totalGames == 0)
+            if (TotalGames == 0)
             {
                 return 0.0;
             }
 
-            return (double)_wins / _totalGames;
+            return (double)Wins / TotalGames;
 
         }
 
         public double AverageTime()
         {
 
-            if (_totalGames == 0)
+            if (TotalGames == 0)
             {
                 return 0.0;
             }
 
-            return (double)_totalTimePlayed / _totalGames;
+            return (double)TotalTimePlayed / TotalGames;
 
         }
 
         public void Reset()
         {
 
-            _totalGames = 0;
-            _wins = 0;
-            _losses = 0;
-            _bestTime = 0;
+            TotalGames = 0;
+            Wins = 0;
+            Losses = 0;
+            BestTime = 0;
 
         }
 

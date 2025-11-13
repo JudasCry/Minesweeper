@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Lab3
 {
@@ -6,51 +8,46 @@ namespace Lab3
     {
 
         private Cell[,] _grid;
-        private int _totalMines;
         private int _cellsRevealed;
         private int _flagsPlaced;
-        private readonly int _width;
-        private readonly int _height;
+
+        public int Width { get; }
+        public int Height { get; }
+        public int TotalMines { get; set; }
+
+        public IEnumerable<Cell> AllCells
+        {
+            get
+            {
+                return Enumerable.Range(0, Height)
+                        .SelectMany(y => Enumerable.Range(0, Width)
+                            .Select(x => _grid[y, x]));
+            }
+        }
 
         public GameField(Difficulty difficulty, MinePlacer minePlacer)
         {
 
-            _width = difficulty.Width;
-            _height = difficulty.Height;
+            Width = difficulty.Width;
+            Width = difficulty.Height;
 
-            _grid = new Cell[_height, _width]; // Создаём двумерный массив
+            _grid = new Cell[Height, Width]; // Создаём двумерный массив
 
-            for (int y = 0; y < _height; y++)
+            for (int y = 0; y < Height; y++)
             {
-                for (int x = 0; x < _width; x++)
+                for (int x = 0; x < Width; x++)
                 {
-                    _grid[y, x] = new Cell(); // Создаём клетку
-                    _grid[y, x].SetCoordinates(x, y); // Устанавливаем координаты клетки
+                    _grid[y, x] = new Cell(x, y); // Создаём клетку
                 }
 
             }
 
         }
 
-        public int Width
-        {
-            get { return _width; }
-        }
-
-        public int Height
-        {
-            get { return _height; }
-        }
-
-        public int TotalMines
-        {
-            set { _totalMines = value; }
-        }
-
         public bool RevealCell(Point p)
         {
 
-            if (p.X < 0 || p.X >= _width || p.Y < 0 || p.Y >= _height)
+            if (p.X < 0 || p.X >= Width || p.Y < 0 || p.Y >= Height)
             {
                 return false;
             }
@@ -126,52 +123,33 @@ namespace Lab3
 
         }
 
-        public void SetTotalMines(int totalMines)
-        {
-            _totalMines = totalMines;
-        }
-
         public void CountAdjacentMines()
         {
 
-            for (int y = 0; y < _height; ++y)
+            foreach (var cell in AllCells)
             {
-                for (int x = 0; x < _width; ++x)
+
+                if (cell.IsMine) continue;
+
+                int mineCount = 0;
+
+                var neighbours = GetNeighbours(new Point(cell.X,cell.Y));
+
+                foreach (var neighbour in neighbours)
                 {
-
-                    if (_grid[y, x].IsMine) continue;
-
-                    int mineCount = 0;
-
-                    for (int dy = -1; dy <= 1; ++dy)
+                    if (neighbour.IsMine)
                     {
-                        for (int dx = -1; dx <= 1; ++dx)
-                        {
-
-                            if (dx == 0 && dy == 0) continue;
-
-                            int nx = x + dx;   
-                            int ny = y + dy;
-
-                            if (nx >= 0 && nx < _width && ny >= 0 && ny < _height)
-                            {
-                                if (_grid[ny, nx].IsMine)
-                                {
-                                    mineCount++;
-                                }
-                            }
-
-                        }
+                        mineCount++;
                     }
-                    _grid[y, x].AdjacentMines = mineCount;
                 }
+                cell.AdjacentMines = mineCount;
             }
         }
 
         public bool ToggleFlag(Point p)
         {
 
-            if (p.X < 0 || p.X >= _width || p.Y < 0 || p.Y >= _height)
+            if (p.X < 0 || p.X >= Width || p.Y < 0 || p.Y >= Height)
             {
                 return false;
             }
@@ -201,7 +179,7 @@ namespace Lab3
         public Cell GetCell(int x, int y)
         {
             
-            if (x < 0 || x >= _width || y < 0 || y >= _height)
+            if (x < 0 || x >= Width || y < 0 || y >= Height)
             {
                 return null;
             }
@@ -212,35 +190,33 @@ namespace Lab3
 
         public bool CheckWin()
         {
-            return _cellsRevealed == (_width * _height - _totalMines);
+            return _cellsRevealed == (Width * Height - TotalMines);
         }
 
         public void RevealAllMines()
         {
 
-            for (int y = 0; y < _height; ++y)
+            foreach (var cell in AllCells)
             {
-                for (int x = 0; x < _width; ++x)
+                if (cell.IsMine)
                 {
-                    if (_grid[y, x].IsMine)
-                    {
-                        _grid[y, x].IsRevealed = true;
-                    }
+                    cell.IsRevealed = true;
                 }
             }
 
         }
 
+        public void SetTotalMines(int totalMines)
+        {
+            TotalMines = totalMines;
+        }
+
         public void ResetField()
         {
 
-            for (int y = 0; y < _height; ++y)
+            foreach (var cell in AllCells) 
             {
-                for (int x = 0; x < _width; ++x)
-                {
-                    _grid[y, x].IsRevealed = false;
-                    _grid[y, x].IsFlagged = false;
-                }
+                cell.Reset();
             }
 
             _cellsRevealed = 0;

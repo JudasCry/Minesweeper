@@ -5,23 +5,13 @@ namespace Lab3
     public class Point
     {
 
-        private readonly int _x;
-        private readonly int _y;
+        public int X { get; }
+        public int Y { get; }
 
         public Point(int x, int y)
         {
-            _x = x;
-            _y = y;
-        }
-
-        public int X
-        {
-            get { return _x; }
-        }
-
-        public int Y
-        {
-            get { return _y; }
+            X = x;
+            Y = y;
         }
 
     }

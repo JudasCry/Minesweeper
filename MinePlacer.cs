@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Lab3
 {
@@ -15,62 +16,60 @@ namespace Lab3
         public void PlaceMines(GameField field, int mines, Point safePoint)
         {
 
-            int placedMines = 0;
             int fieldWidth = field.Width;
             int fieldHeight = field.Height;
 
-            int attempts = 0;
-            int maxAttempts = fieldWidth * fieldHeight * 2;
+            int totalCells = fieldHeight * fieldWidth;
 
-            while (placedMines < mines && attempts < maxAttempts)
+            List<Point> availablePositions = new List<Point>(totalCells);
+
+            for (int y = 0; y < fieldHeight; y++)
+            {
+                for (int x = 0; x < fieldWidth; x++)
+                {
+                    Point currentPoint = new Point(x, y);
+
+                    if (!(currentPoint.X == safePoint.X && currentPoint.Y == safePoint.Y))
+                    {
+                        availablePositions.Add(new Point(x, y));
+                    }
+                }
+            }
+
+            Shuffle(availablePositions); // Перемешиваем список клеток поля
+
+            int placedMines = 0;
+
+            for (int i = 0; i < mines; i++)
             {
 
-                Point RandomPos = GetRandomPosition(fieldWidth, fieldHeight);
+                Point minePos = availablePositions[i];
 
-                if (CanPlaceMine(field, RandomPos, safePoint))
-                {
+                Cell cell = field.GetCell(minePos.X, minePos.Y);
 
-                    Cell cell = field.GetCell(RandomPos.X, RandomPos.Y);
+                cell.IsMine = true;
+                placedMines++;
 
-                    if (cell != null)
-                    {
-                        cell.IsMine = true;
-                        placedMines++;
-                    }
-
-                }
-
-                attempts++;
             }
 
             field.SetTotalMines(placedMines);
         }
 
-        public bool CanPlaceMine(GameField field, Point point, Point safePoint)
+        public void Shuffle<T> (List<T> list) 
         {
 
-            // Проверяем не является ли это безопасной точкой //
-            if (point.X == safePoint.X && point.Y == safePoint.Y)
+            // Перемешиваем список //
+            for (int n = list.Count - 1; n > 0; n--)
             {
-                return false;
+
+                int k = _randomGenerator.Next(n + 1);
+
+                T value = list[k];
+                list[k] = list[n];
+                list[n] = value;
+
             }
 
-            Cell cell = field.GetCell(point.X, point.Y);
-
-            if (cell != null && !cell.IsMine)
-            {
-                return true;
-            }
-
-            return false;
-        }
-
-        public Point GetRandomPosition(int maxX, int maxY)
-        {
-            int x = _randomGenerator.Next(0, maxX);
-            int y = _randomGenerator.Next(0, maxY);
-
-            return new Point(x, y);
         }
 
     }
