@@ -33,19 +33,46 @@ namespace Lab3
 
         public void StartGame(Point safeStartPoint)
         {
+            try
+            {
 
-            State = GameState.Running;
-            _safeStartPoint = safeStartPoint;
+                if (State != GameState.Waiting && State != GameState.Paused)
+                    throw new InvalidOperationException("Игра уже запущена");
 
-            int numMinesToPlace = CurrentDifficulty.Mines;
+                if (safeStartPoint == null)
+                    throw new ArgumentNullException(nameof(safeStartPoint));
 
-            // Расставляем мины и считаем соседние мины //
-            _minePlacer.PlaceMines(Field, numMinesToPlace, _safeStartPoint);
-            Field.CountAdjacentMines();
+                if (safeStartPoint.X < 0 || safeStartPoint.X >= Field.Width ||
+                    safeStartPoint.Y < 0 || safeStartPoint.Y >= Field.Height)
+                    throw new ArgumentOutOfRangeException(nameof(safeStartPoint), 
+                        "Безопасная точка находится за пределами поля");
 
-            // Перезапускаем и запускаем таймер //
-            Timer.Restart();
-            Timer.Start();
+                State = GameState.Running;
+                _safeStartPoint = safeStartPoint;
+
+                int numMinesToPlace = CurrentDifficulty.Mines;
+
+                // Расставляем мины и считаем соседние мины //
+                _minePlacer.PlaceMines(Field, numMinesToPlace, _safeStartPoint);
+                Field.CountAdjacentMines();
+
+                // Перезапускаем и запускаем таймер //
+                Timer.Restart();
+                Timer.Start();
+
+            }
+            catch (InvalidOperationException ex)
+            {
+                Console.WriteLine($"Ошибка запуска игры: {ex.Message}");
+                State = GameState.Waiting;
+                throw;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Критическая ошибка при запуске игры: {ex.Message}");
+                State = GameState.Waiting;
+                throw new ApplicationException("Не удалось запустить игру", ex);
+            }
 
         }
 
@@ -90,32 +117,47 @@ namespace Lab3
 
         public void CellClick(Point clickPoint)
         {
-
-            if (State != GameState.Running)
-            {
-                return;
-            }
-
-            bool revealSuccessful = Field.RevealCell(clickPoint);
-
-            if (!revealSuccessful)
+            try
             {
 
-                Cell clickedCell = Field.GetCell(clickPoint.X, clickPoint.Y);
-                if (clickedCell != null && clickedCell.IsMine)
+                if (State != GameState.Running)
+                    throw new InvalidOperationException("Игра не активна");
+
+                if (clickPoint == null)
+                    throw new ArgumentNullException(nameof(clickPoint));
+
+                bool revealSuccessful = Field.RevealCell(clickPoint);
+
+                if (!revealSuccessful)
                 {
-                    EndGame(false);
+
+                    Cell clickedCell = Field.GetCell(clickPoint.X, clickPoint.Y);
+                    if (clickedCell != null && clickedCell.IsMine)
+                    {
+                        EndGame(false);
+                    }
+
+                    return;
                 }
 
-                return;
+                if (Field.CheckWin())
+                {
+
+                    EndGame(true);
+                    return;
+
+                }
+
+            }
+            catch (InvalidOperationException ex)
+            {
+                Console.WriteLine($"Ошибка игрового действия: {ex.Message}");
             }
 
-            if (Field.CheckWin())
+            catch (Exception ex)
             {
-
-                EndGame(true);
-                return;
-
+                Console.WriteLine($"Неожиданная ошибка при клике: {ex.Message}");
+                throw new ApplicationException("Ошибка игрового процесса", ex);
             }
 
         }
