@@ -10,7 +10,7 @@ class GameField
 {
 private:
 
-    std::vector<std::vector<Cell>> grid;
+    std::vector<std::vector<std::unique_ptr<Cell>>> grid;
     int totalMines;
     int cellsRevealed;
     int flagsPlaced;
@@ -20,6 +20,8 @@ private:
 public:
 
     GameField(const Difficulty& difficulty, MinePlacer& minePlacer);
+
+    GameField(const GameField& other);
 
     bool revealCell(Point p);
     bool toggleFlag(Point p);

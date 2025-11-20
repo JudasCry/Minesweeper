@@ -19,6 +19,8 @@ public:
 
     Statistics(int totalGames, int wins, int losses, int totalTimePlayed, int bestTime);
 
+    Statistics(const Statistics& other) = default;
+
     void addGameResult(bool won, int time);
     double getWinRate() const;
     int getBestTime() const;
