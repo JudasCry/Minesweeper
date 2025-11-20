@@ -1,18 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace Lab3
 {
     public class Difficulty
     {
-
-        // Статическое поле - словарь предустановленных уровней сложности //
-        private static readonly Dictionary<string, Difficulty> _presetDifficulties = new Dictionary<string, Difficulty>
-        {
-            { "beginner", new Difficulty("beginner", 10, 10, 10) },
-            { "intermediate", new Difficulty("intermediate", 16, 16, 40) },
-            { "expert", new Difficulty("expert", 30, 16, 99) },
-        };
 
         public string Name { get; }
         public int Width { get; }
@@ -37,12 +28,6 @@ namespace Lab3
             Height = height;
             Mines = mines;
 
-        }
-
-        // Статический метод для получения всех доступных предустановленных уровней //
-        public static IEnumerable<string> GetAvailableDifficulties()
-        {
-            return _presetDifficulties.Keys;
         }
 
     }

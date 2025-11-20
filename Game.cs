@@ -33,46 +33,19 @@ namespace Lab3
 
         public void StartGame(Point safeStartPoint)
         {
-            try
-            {
 
-                if (State != GameState.Waiting && State != GameState.Paused)
-                    throw new InvalidOperationException("Игра уже запущена");
+            State = GameState.Running;
+            _safeStartPoint = safeStartPoint;
 
-                if (safeStartPoint == null)
-                    throw new ArgumentNullException(nameof(safeStartPoint));
+            int numMinesToPlace = CurrentDifficulty.Mines;
 
-                if (safeStartPoint.X < 0 || safeStartPoint.X >= Field.Width ||
-                    safeStartPoint.Y < 0 || safeStartPoint.Y >= Field.Height)
-                    throw new ArgumentOutOfRangeException(nameof(safeStartPoint), 
-                        "Безопасная точка находится за пределами поля");
+            // Расставляем мины и считаем соседние мины //
+            _minePlacer.PlaceMines(Field, numMinesToPlace, _safeStartPoint);
+            Field.CountAdjacentMines();
 
-                State = GameState.Running;
-                _safeStartPoint = safeStartPoint;
-
-                int numMinesToPlace = CurrentDifficulty.Mines;
-
-                // Расставляем мины и считаем соседние мины //
-                _minePlacer.PlaceMines(Field, numMinesToPlace, _safeStartPoint);
-                Field.CountAdjacentMines();
-
-                // Перезапускаем и запускаем таймер //
-                Timer.Restart();
-                Timer.Start();
-
-            }
-            catch (InvalidOperationException ex)
-            {
-                Console.WriteLine($"Ошибка запуска игры: {ex.Message}");
-                State = GameState.Waiting;
-                throw;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Критическая ошибка при запуске игры: {ex.Message}");
-                State = GameState.Waiting;
-                throw new ApplicationException("Не удалось запустить игру", ex);
-            }
+            // Перезапускаем и запускаем таймер //
+            Timer.Restart();
+            Timer.Start();
 
         }
 
@@ -117,47 +90,32 @@ namespace Lab3
 
         public void CellClick(Point clickPoint)
         {
-            try
+
+            if (State != GameState.Running)
             {
-
-                if (State != GameState.Running)
-                    throw new InvalidOperationException("Игра не активна");
-
-                if (clickPoint == null)
-                    throw new ArgumentNullException(nameof(clickPoint));
-
-                bool revealSuccessful = Field.RevealCell(clickPoint);
-
-                if (!revealSuccessful)
-                {
-
-                    Cell clickedCell = Field.GetCell(clickPoint.X, clickPoint.Y);
-                    if (clickedCell != null && clickedCell.IsMine)
-                    {
-                        EndGame(false);
-                    }
-
-                    return;
-                }
-
-                if (Field.CheckWin())
-                {
-
-                    EndGame(true);
-                    return;
-
-                }
-
-            }
-            catch (InvalidOperationException ex)
-            {
-                Console.WriteLine($"Ошибка игрового действия: {ex.Message}");
+                return;
             }
 
-            catch (Exception ex)
+            bool revealSuccessful = Field.RevealCell(clickPoint);
+
+            if (!revealSuccessful)
             {
-                Console.WriteLine($"Неожиданная ошибка при клике: {ex.Message}");
-                throw new ApplicationException("Ошибка игрового процесса", ex);
+
+                Cell clickedCell = Field.GetCell(clickPoint.X, clickPoint.Y);
+                if (clickedCell != null && clickedCell.IsMine)
+                {
+                    EndGame(false);
+                }
+
+                return;
+            }
+
+            if (Field.CheckWin())
+            {
+
+                EndGame(true);
+                return;
+
             }
 
         }
