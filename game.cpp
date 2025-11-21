@@ -1,6 +1,6 @@
 #include "game.hpp"
 
-Game::Game(const Difficulty& difficulty, const Settings& settings, Statistics& externalStatistics)
+Game::Game(const Difficulty& difficulty, const Settings& settings, std::shared_ptr<Statistics> externalStatistics)
 
     : currentDifficulty(difficulty),
       currentSettings(settings),
@@ -56,7 +56,7 @@ void Game::endGame(bool won) {
     timer.stop();
 
     int timePlayed = timer.getElapsedSeconds();
-    gameStatistics.addGameResult(won, timePlayed);
+    gameStatistics->addGameResult(won, timePlayed);
 
     gameState = won ? GameState::Won : GameState::Lost;
 
@@ -132,6 +132,6 @@ const Settings& Game::getCurrentSettings() {
     return currentSettings;
 }
 
-Statistics& Game::getStatistics() {
+std::shared_ptr<Statistics> Game::getStatistics() {
     return gameStatistics;
 }

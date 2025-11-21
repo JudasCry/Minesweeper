@@ -2,8 +2,9 @@
 
 #include <QString>
 #include <QSettings>
+#include "basesettings.hpp"
 
-class Settings
+class Settings : public BaseSettings
 {
 private:
 
@@ -21,6 +22,8 @@ public:
 
     Settings();
 
+    Settings(const QString& version);
+
     void saveSettings() const;
     void loadSettings();
     void resetToDefaults();
@@ -30,5 +33,7 @@ public:
     void setLanguage(const QString& language);
     void setSoundEnabled(bool enabled);
     void setTheme(const QString& themeName);
+
+    void validate() const override;
 
 };

@@ -19,12 +19,12 @@ private:
     Difficulty currentDifficulty;
     GameState gameState;
     Settings currentSettings;
-    Statistics& gameStatistics;
+    std::shared_ptr<Statistics> gameStatistics;
     Point safeStartPoint;
 
 public:
 
-    Game(const Difficulty& difficulty, const Settings& settings, Statistics& statistics);
+    Game(const Difficulty& difficulty, const Settings& settings, std::shared_ptr<Statistics> statistics);
     ~Game();
 
     void startGame(const Point& safeStartPoint);
@@ -38,6 +38,6 @@ public:
     const Difficulty& getCurrentDifficulty();
     void setCurrentDifficulty(const Difficulty& newDifficulty);
     const Settings& getCurrentSettings();
-    Statistics& getStatistics();
+    std::shared_ptr<Statistics> getStatistics();
 
 };

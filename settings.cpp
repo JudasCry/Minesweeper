@@ -4,14 +4,17 @@ const QString Settings::THEME_KEY = "theme";
 const QString Settings::SOUND_ENABLED_KEY = "soundEnabled";
 const QString Settings::LANGUAGE_KEY = "language";
 
-Settings::Settings()
+Settings::Settings(const QString& version)
 
     : language("ru"),
       soundEnabled(true),
-      theme("default")
+      theme("default"),
+      BaseSettings(version)
 
 {
     loadSettings();
+
+    Settings::validate();
 }
 
 // Загрузка настроек из файла //
@@ -99,4 +102,16 @@ void Settings::setTheme(const QString& themeName) {
 
     saveSettings();
 
+}
+
+void Settings::validate() const {
+
+    BaseSettings::validate();
+
+    if (language.isEmpty()) {
+        throw std::invalid_argument("Язык не может быть пустым");
+    }
+    if (theme.isEmpty()) {
+        throw std::invalid_argument("Тема не может быть пустой");
+    }
 }

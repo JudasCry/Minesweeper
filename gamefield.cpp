@@ -13,7 +13,27 @@ GameField::GameField(const Difficulty& difficulty, MinePlacer& minePlacer)
     for (int i = 0; i < height; i++) {
         grid[i].resize(width); // Создаём 'width' столбцов в каждой строке
         for (int j = 0; j < width; j++) {
-            grid[i][j].setCoordinates(j, i); // Устанавливаем координаты клетки
+            grid[i][j] = std::make_unique<Cell>(); // Создаём через make_unique
+            grid[i][j]->setCoordinates(j, i); // Устанавливаем координаты клетки
+        }
+    }
+
+}
+
+GameField::GameField(const GameField& other)
+
+    : totalMines(other.totalMines),
+      cellsRevealed(other.cellsRevealed),
+      flagsPlaced(other.flagsPlaced),
+      width(other.width),
+      height(other.height)
+{
+
+    grid.resize(height);
+    for (int i = 0; i < height; i++) {
+        grid[i].resize(width);
+        for (int j = 0; j < width; j++) {
+            grid[i][j] = std::make_unique<Cell>(*other.grid[i][j]);
         }
     }
 
@@ -25,7 +45,7 @@ bool GameField::revealCell(Point p) {
         return false;
     }
 
-    Cell* cell = getCell(p.getX(), p.getY());
+    Cell* cell = grid[p.getY()][p.getX()].get(); // Получаем сырой указатель на Cell
 
     if (cell->getIsRevealed() || cell->getIsFlagged()) {
         return false;
@@ -63,7 +83,7 @@ bool GameField::toggleFlag(Point p) {
         return false;
     }
 
-    Cell* cell = getCell(p.getX(), p.getY());
+    Cell* cell = grid[p.getY()][p.getX()].get();
 
     if (cell->getIsRevealed()) {
         return false;
@@ -87,29 +107,27 @@ bool GameField::toggleFlag(Point p) {
 
 // Геттеры //
 int GameField::getWidth() const {
-    return grid.empty() ? 0 : grid[0].size();
+    return width;
 }
 
 int GameField::getHeight() const {
-    return grid.size();
+    return height;
 }
 
 Cell* GameField::getCell(int x, int y) {
-
     if (x < 0 || x >= width || y < 0 || y >= height) {
         return nullptr;
     }
 
-    return &grid[y][x];
+    return grid[y][x].get();
 }
 
 const Cell* GameField::getCell(int x, int y) const {
-
     if (x < 0 || x >= width || y < 0 || y >= height) {
         return nullptr;
     }
 
-    return &grid[y][x];
+    return grid[y][x].get();
 }
 
 std::vector<Cell*> GameField::getNeighbours(Point p) {
@@ -145,7 +163,7 @@ void GameField::countAdjacentMines() {
     for (int y = 0; y < height; ++y) {
         for (int x = 0; x < width; ++x) {
 
-            if (grid[y][x].getIsMine()) continue;
+            if (grid[y][x]->getIsMine()) continue;
 
             int mineCount = 0;
 
@@ -159,13 +177,13 @@ void GameField::countAdjacentMines() {
 
                     if (nx >= 0 && nx < width && ny >= 0 && ny < height) {
 
-                        if (grid[ny][nx].getIsMine()) {
+                        if (grid[ny][nx]->getIsMine()) {
                             mineCount++;
                         }
                     }
                 }
             }
-            grid[y][x].setAdjacentMines(mineCount);
+            grid[y][x]->setAdjacentMines(mineCount);
        }
     }
 }
@@ -179,8 +197,8 @@ void GameField::revealAllMines() {
     for (int y = 0; y < height; ++y) {
         for (int x = 0; x < width; ++x) {
 
-            if (grid[y][x].getIsMine()) {
-                grid[y][x].setRevealed(true);
+            if (grid[y][x]->getIsMine()) {
+                grid[y][x]->setRevealed(true);
             }
         }
     }
@@ -191,8 +209,8 @@ void GameField::resetField() {
     for (int y = 0; y < height; ++y) {
         for (int x = 0; x < width; ++x) {
 
-            grid[y][x].setRevealed(false);
-            grid[y][x].setFlagged(false);
+            grid[y][x]->setRevealed(false);
+            grid[y][x]->setFlagged(false);
 
         }
     }
