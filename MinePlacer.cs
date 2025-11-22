@@ -57,17 +57,31 @@ namespace Lab3
 
         public void Shuffle<T> (List<T> list) 
         {
-
-            // Перемешиваем список //
-            for (int n = list.Count - 1; n > 0; n--)
+            try
             {
 
-                int k = _randomGenerator.Next(n + 1);
+                if (list == null)
+                    throw new ArgumentNullException("list");
 
-                T value = list[k];
-                list[k] = list[n];
-                list[n] = value;
+                if (list.Count == 0)
+                    return;
 
+                // Перемешиваем список //
+                for (int n = list.Count - 1; n > 0; n--)
+                {
+
+                    int k = _randomGenerator.Next(n + 1);
+
+                    T value = list[k];
+                    list[k] = list[n];
+                    list[n] = value;
+
+                }
+
+            } 
+            catch (ArgumentOutOfRangeException ex)
+            {
+                throw new InvalidOperationException("Ошибка при перемешивании списка", ex);
             }
 
         }
